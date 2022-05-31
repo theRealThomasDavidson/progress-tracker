@@ -1,5 +1,5 @@
 package com.cognixia.jump.progress;
 
-public class tracker {
+public class menus {
 
 }
