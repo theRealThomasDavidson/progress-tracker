@@ -2,99 +2,87 @@ drop database if exists progress;
 create database progress;
 use progress;
 
-create table progress_user(
-	id int unique not null primary key auto_increment ,
-    username varchar(255) not null,
-    first_name varchar(255) not null,
-    last_name varchar(255) not null,
-    pass_hash char(255), 
+create table `user`(
+	user_id int unique not null primary key auto_increment,
+    user_username varchar(255) not null,
+    user_firstName varchar(255) not null,
+    user_lastName varchar(255) not null,
+    user_email varchar(255) not null, 
+    user_password varchar(255) not null default "", 
     is_admin enum('y','n') default 'n'
 );
 
 create table movie(
-	id int unique not null primary key auto_increment,
-    title varchar(255) not null,
-	rating enum('G','PG','PG13','R'),
-    length_in_minutes int
+	movie_id int unique not null primary key auto_increment,
+    movie_name varchar(255) not null,
+	movie_rating enum('G','PG','PG13','R'),
+	movie_release_date date default null,
+    movie_time_minutes int,
+    movie_cost double default null
 );
 
-create table movie_user(
-	id int unique not null primary key auto_increment,
+create table user_movie(
+	mtm_id int unique not null primary key auto_increment,
     user_id int, 
-	foreign key(user_id) references progress_user(id),
+	foreign key(user_id) references `user`(user_id),
     movie_id int, 
-	foreign key(movie_id) references movie(id),
-    watch_time_in_minutes int default 0,
-    rating enum('1','2','3','4', '5', 'no rating yet')
+	foreign key(movie_id) references movie(movie_id),
+    movie_progress_minutes int default 0,
+    movie_starRating enum('1','2','3','4', '5', 'no rating yet')
 		default 'no rating yet'
 );
 
-create table playlist(
-	id int unique not null primary key auto_increment,
-    playlist_name varchar(255) not null,
-    user_id int,
-	foreign key(user_id) references progress_user(id)
+create table watchlist(
+	watchlist_id int unique not null primary key auto_increment,
+    watchlist_name varchar(255) not null,
+    user_id int not null,
+	foreign key(user_id) references `user`(user_id),
+    mtm_id int not null,
+	foreign key(mtm_id) references user_movie(mtm_id)
 );
 
-create table playlist_item(
-	id int unique not null primary key auto_increment,
-    playlist_id int, 
-	foreign key (playlist_id) references playlist(id),
-    item_id int,
-	foreign key(item_id) references movie_user(id)
-);
 
-INSERT INTO `progress_user`(username, first_name, last_name) VALUES ("user1","Alice","Anderson");
-INSERT INTO `progress_user`(username, first_name, last_name) VALUES ("user2","Bob","barker");
-INSERT INTO `progress_user`(username, first_name, last_name) VALUES ("user3","Carol","Cantrel");
-INSERT INTO `progress_user`(username, first_name, last_name) VALUES ("user4","Doug","Dennis");
-INSERT INTO `progress_user`(username, first_name, last_name) VALUES ("user5","Erin","Ekleson");
+INSERT INTO `user`(user_username, user_firstName, user_lastName, user_email) VALUES ("user1","Alice","Anderson", "");
+INSERT INTO `user`(user_username, user_firstName, user_lastName, user_email) VALUES ("user2","Bob","barker", "");
+INSERT INTO `user`(user_username, user_firstName, user_lastName, user_email) VALUES ("user3","Carol","Cantrel", "");
+INSERT INTO `user`(user_username, user_firstName, user_lastName, user_email) VALUES ("user4","Doug","Dennis", "");
+INSERT INTO `user`(user_username, user_firstName, user_lastName, user_email) VALUES ("user5","Erin","Ekleson", "");
 
-INSERT INTO `movie`(title, rating, length_in_minutes) VALUES ("movie1","G",96);
-INSERT INTO `movie`(title, rating, length_in_minutes) VALUES ("movie2","PG",118);
-INSERT INTO `movie`(title, rating, length_in_minutes) VALUES ("movie3","PG13",143);
-INSERT INTO `movie`(title, rating, length_in_minutes) VALUES ("movie4","R",87);
+INSERT INTO `movie`(movie_name, movie_rating, movie_time_minutes) VALUES ("movie1","G",96);
+INSERT INTO `movie`(movie_name, movie_rating, movie_time_minutes) VALUES ("movie2","PG",118);
+INSERT INTO `movie`(movie_name, movie_rating, movie_time_minutes) VALUES ("movie3","PG13",143);
+INSERT INTO `movie`(movie_name, movie_rating, movie_time_minutes) VALUES ("movie4","R",87);
 
-insert into `movie_user`(user_id, movie_id) values(1,2);
-insert into `movie_user`(user_id, movie_id) values(1,4);
-insert into `movie_user`(user_id, movie_id) values(2,1);
-insert into `movie_user`(user_id, movie_id) values(2,3);
-insert into `movie_user`(user_id, movie_id) values(2,4);
-insert into `movie_user`(user_id, movie_id) values(3,1);
-insert into `movie_user`(user_id, movie_id) values(3,4);
-insert into `movie_user`(user_id, movie_id) values(4,1);
-insert into `movie_user`(user_id, movie_id) values(5,2);
-insert into `movie_user`(user_id, movie_id) values(5,3);
-insert into `movie_user`(user_id, movie_id) values(5,4);
+insert into `user_movie`(user_id, movie_id) values(1,2);
+insert into `user_movie`(user_id, movie_id) values(1,4);
+insert into `user_movie`(user_id, movie_id) values(2,1);
+insert into `user_movie`(user_id, movie_id) values(2,3);
+insert into `user_movie`(user_id, movie_id) values(2,4);
+insert into `user_movie`(user_id, movie_id) values(3,1);
+insert into `user_movie`(user_id, movie_id) values(3,4);
+insert into `user_movie`(user_id, movie_id) values(4,1);
+insert into `user_movie`(user_id, movie_id) values(5,2);
+insert into `user_movie`(user_id, movie_id) values(5,3);
+insert into `user_movie`(user_id, movie_id) values(5,4);
 
 
-insert into `playlist`(playlist_name, user_id) values("gregory", 1);
-insert into `playlist`(playlist_name, user_id) values("phyllis", 2);
-insert into `playlist`(playlist_name, user_id) values("eleanore", 3);
-insert into `playlist`(playlist_name, user_id) values("maybell", 4);
-insert into `playlist`(playlist_name, user_id) values("genovieve", 5);
-insert into `playlist`(playlist_name, user_id) values("bernadette", 2);
-insert into `playlist`(playlist_name, user_id) values("clarice", 3);
+insert into `watchlist`(watchlist_name, mtm_id, user_id) values("gregory", 1, (select user_id from user_movie where mtm_id=1));
+insert into `watchlist`(watchlist_name, mtm_id, user_id) values("phyllis", 2, (select user_id from user_movie where mtm_id=2));
+insert into `watchlist`(watchlist_name, mtm_id, user_id) values("eleanore", 3, (select user_id from user_movie where mtm_id=3));
+insert into `watchlist`(watchlist_name, mtm_id, user_id) values("maybell", 4, (select user_id from user_movie where mtm_id=4));
+insert into `watchlist`(watchlist_name, mtm_id, user_id) values("genovieve", 5, (select user_id from user_movie where mtm_id=5));
+insert into `watchlist`(watchlist_name, mtm_id, user_id) values("bernadette", 2, (select user_id from user_movie where mtm_id=2));
+insert into `watchlist`(watchlist_name, mtm_id, user_id) values("clarice", 3, (select user_id from user_movie where mtm_id=3));
 
 
-insert into playlist_item(playlist_id, item_id) values (1,1);
-insert into playlist_item(playlist_id, item_id) values (1,2);
-insert into playlist_item(playlist_id, item_id) values (2,3);
-insert into playlist_item(playlist_id, item_id) values (2,4);
-insert into playlist_item(playlist_id, item_id) values (6,5);
-insert into playlist_item(playlist_id, item_id) values (3,6);
-insert into playlist_item(playlist_id, item_id) values (3,7);
-insert into playlist_item(playlist_id, item_id) values (7,6);
-insert into playlist_item(playlist_id, item_id) values (4,8);
-insert into playlist_item(playlist_id, item_id) values (5,9);
-insert into playlist_item(playlist_id, item_id) values (5,10);
-insert into playlist_item(playlist_id, item_id) values (5,11);
-
-select * from progress_user;
+select * from `user`;
 select * from movie;
-select * from movie_user 
-join progress_user on progress_user.id=movie_user.user_id
-join movie on movie.id=movie_user.movie_id;
+select movie_name as title, 
+			concat(`user`.user_firstName, " ", `user`.user_lastName) as 'name', 
+			user_movie.movie_progress_minutes as watch_time, 
+            movie.movie_time_minutes as total_time from user_movie 
+join `user` on `user`.user_id=user_movie.user_id
+join movie on movie.movie_id=user_movie.movie_id;
 
 select *, playlist_name from playlist_item
 join movie_user on playlist_item.item_id=movie_user.id
