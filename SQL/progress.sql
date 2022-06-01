@@ -41,7 +41,7 @@ create table watchlist(
 	foreign key(mtm_id) references user_movie(mtm_id)
 );
 
-
+#ADD USER
 INSERT INTO `user`(user_username, user_firstName, user_lastName, user_email) VALUES ("user1","Alice","Anderson", "");
 INSERT INTO `user`(user_username, user_firstName, user_lastName, user_email) VALUES ("user2","Bob","barker", "");
 INSERT INTO `user`(user_username, user_firstName, user_lastName, user_email) VALUES ("user3","Carol","Cantrel", "");
@@ -66,23 +66,54 @@ insert into `user_movie`(user_id, movie_id) values(5,3);
 insert into `user_movie`(user_id, movie_id) values(5,4);
 
 
-insert into `watchlist`(watchlist_name, mtm_id, user_id) values("gregory", 1, (select user_id from user_movie where mtm_id=1));
-insert into `watchlist`(watchlist_name, mtm_id, user_id) values("phyllis", 2, (select user_id from user_movie where mtm_id=2));
-insert into `watchlist`(watchlist_name, mtm_id, user_id) values("eleanore", 3, (select user_id from user_movie where mtm_id=3));
-insert into `watchlist`(watchlist_name, mtm_id, user_id) values("maybell", 4, (select user_id from user_movie where mtm_id=4));
-insert into `watchlist`(watchlist_name, mtm_id, user_id) values("genovieve", 5, (select user_id from user_movie where mtm_id=5));
-insert into `watchlist`(watchlist_name, mtm_id, user_id) values("bernadette", 2, (select user_id from user_movie where mtm_id=2));
-insert into `watchlist`(watchlist_name, mtm_id, user_id) values("clarice", 3, (select user_id from user_movie where mtm_id=3));
+#insert into `watchlist`(watchlist_name, mtm_id, user_id) values("gregory", 1, (select user_id from user_movie where mtm_id=1));
+#insert into `watchlist`(watchlist_name, mtm_id, user_id) values("phyllis", 2, (select user_id from user_movie where mtm_id=2));
+#insert into `watchlist`(watchlist_name, mtm_id, user_id) values("eleanore", 3, (select user_id from user_movie where mtm_id=3));
+#insert into `watchlist`(watchlist_name, mtm_id, user_id) values("maybell", 4, (select user_id from user_movie where mtm_id=4));
+#insert into `watchlist`(watchlist_name, mtm_id, user_id) values("genovieve", 5, (select user_id from user_movie where mtm_id=5));
+#insert into `watchlist`(watchlist_name, mtm_id, user_id) values("bernadette", 2, (select user_id from user_movie where mtm_id=2));
+#insert into `watchlist`(watchlist_name, mtm_id, user_id) values("clarice", 3, (select user_id from user_movie where mtm_id=3));
 
 
-select * from `user`;
-select * from movie;
+
+#get All
 select movie_name as title, 
 			concat(`user`.user_firstName, " ", `user`.user_lastName) as 'name', 
 			user_movie.movie_progress_minutes as watch_time, 
-            movie.movie_time_minutes as total_time from user_movie 
+            movie.movie_time_minutes as total_time,
+            user_movie.movie_starRating as rating from user_movie 
 join `user` on `user`.user_id=user_movie.user_id
-join movie on movie.movie_id=user_movie.movie_id;
+join movie on movie.movie_id=user_movie.movie_id
+where `user`.user_id = 3;
+
+#get one by id
+select movie_name as title, 
+			`user`.user_username as 'username', 
+			concat(`user`.user_firstName, " ", `user`.user_lastName) as 'name', 
+			user_movie.movie_progress_minutes as watch_time, 
+            movie.movie_time_minutes as total_time,
+            user_movie.movie_starRating as rating from user_movie 
+join `user` on `user`.user_id=user_movie.user_id
+join movie on movie.movie_id=user_movie.movie_id
+where `user`.user_id = 3 and user_movie.mtm_id = 6;
+
+#add user movie
+insert into `user_movie`(user_id, movie_id, movie_progress_minutes, movie_starRating) values(5, 4, 0, 'no rating yet');
+select * from user_movie;
+#delete user movie
+delete from `user_movie` where mtm_id = 2;
+
+#update user movie
+update `user_movie` set 
+	user_id=1,
+    movie_id=1,
+    movie_progress_minutes = 12,
+    movie_starRating = 'no rating yet'
+where mtm_id = 12;
+
+
+select * from user_movie;
+describe user_movie;
 
 select *, playlist_name from playlist_item
 join movie_user on playlist_item.item_id=movie_user.id
