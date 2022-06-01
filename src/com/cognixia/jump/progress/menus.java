@@ -118,6 +118,7 @@ public class menus {
 
 	public static void MoviesMenu() {
 		// print all movies
+		//Some comment? Like, here?
 		System.out.println("All Movies:\n");
 
 		for (int i = 0; i < allMovies.size(); i++) {
