@@ -15,6 +15,7 @@ public class DAO implements UserDAOInterface{
 	private Connection conn = ConnectionManager.getConnection();
 
 	@Override
+	
 	public List<Movie> getAllMovies() {
 		try {
 			Statement stmt = conn.createStatement();
