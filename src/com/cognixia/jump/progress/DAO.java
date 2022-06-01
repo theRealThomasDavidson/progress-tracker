@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.cognixia.jump.jdbc.dao.Department;
-
 
 public class DAO implements UserDAOInterface{
 	
@@ -41,7 +39,7 @@ public class DAO implements UserDAOInterface{
 			
 			
 		} catch(SQLException e) {
-			System.out.println("Could NOT retrieve list of departments from D/B :(");
+			System.out.println("Could NOT retrieve list of movie from D/B :(");
 		}
 		
 		return null;
@@ -51,7 +49,7 @@ public class DAO implements UserDAOInterface{
 	public Movie getMovie(int movieId) {
 		try {
 			
-			PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM department WHERE dept_id = ?");
+			PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM movie WHERE dept_id = ?");
 			pstmt.setInt(1, movieId);
 			
 			ResultSet rs = pstmt.executeQuery();
@@ -64,14 +62,14 @@ public class DAO implements UserDAOInterface{
 				int duration = rs.getInt("movie_time_minutes");
 				double cost = rs.getDouble("movie_cost");
 			
-				Movie movie = new Movie( id, name, rating, release, duration,cost );
-				return dept;
+				Movie movie = new Movie(name, rating, release, duration,cost );
+				return movie;
 			}
 			
 			
 			
 		}catch(SQLException e) {
-			System.out.println("Could NOT locate the department record with id ==> " + deptId);
+			System.out.println("Could NOT locate the movie record with id ==> " + movieId);
 		}
 		
 		
@@ -80,13 +78,57 @@ public class DAO implements UserDAOInterface{
 
 	@Override
 	public Movie getMovie(String name) {
-		// TODO Auto-generated method stub
+		try {
+			
+			PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM department WHERE movie_name = ?");
+			pstmt.setString(1, name);
+			
+			ResultSet rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				int id = rs.getInt("movie_id");
+				String movie_name = rs.getString("movie_name");
+				String rating = rs.getString("movie_rating");
+				Date release = rs.getDate("movie_release_date");
+				int duration = rs.getInt("movie_time_minutes");
+				double cost = rs.getDouble("movie_cost");
+			
+				Movie movie = new Movie(id, movie_name, rating, release, duration,cost );
+				return movie;
+			}
+			
+			
+			
+		}catch(SQLException e) {
+			System.out.println("Could NOT locate the movie record with name ==> " + name);
+		}
+		
+		
 		return null;
 	}
 
 	@Override
 	public boolean addMovie(Movie movie) {
-		// TODO Auto-generated method stub
+		try {
+			
+			PreparedStatement pstmt = conn.prepareStatement("INSERT INTO movie(movie_id, movie_name, movie_rating, movie_release_date, movie_time_minutes, movie_cost) VALUES(1, ?, ?, ?, ?, ?)");
+			
+			pstmt.setInt(1, movie.getname());
+			pstmt.setString(2, movie.getName());
+			pstmt.setString(3, movie.getPhone());
+			
+			int count = pstmt.executeUpdate();
+			
+			if(count > 0) {
+				return true;
+			}
+			
+		
+		} catch(SQLException e) {
+			System.out.println("Could NOT insert new department record :(");
+		}
+		
+		
 		return false;
 	}
 
