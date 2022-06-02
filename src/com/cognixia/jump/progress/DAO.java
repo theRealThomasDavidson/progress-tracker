@@ -197,7 +197,7 @@ public class DAO implements UserDAOInterface{
 				String email = rs.getString("user_email");
 				String password = rs.getString("user_password");
 				boolean isAdmin = rs.getString("isadmin") == "n";
-				list.add(new User(id, firstName, lastName, email, password, isAdmin));
+				list.add(new User(id, firstName, lastName, email, password));
 			}
 			return list;
 			
@@ -224,7 +224,7 @@ public class DAO implements UserDAOInterface{
 				String email = rs.getString("user_email");
 				String password = rs.getString("user_password");
 				boolean isAdmin = rs.getString("isadmin") == "n";
-				return new User(id, firstName, lastName, email, password, isAdmin);
+				return new User(id, firstName, lastName, email, password);
 			}		
 		
 		} catch(SQLException e) {
@@ -247,7 +247,7 @@ public class DAO implements UserDAOInterface{
 				String email = rs.getString("user_email");
 				String password = rs.getString("user_password");
 				boolean isAdmin = rs.getString("isadmin") == "n";
-				return new User(id, firstName, lastName, email, password, isAdmin);
+				return new User(id, firstName, lastName, email, password);
 			}		
 		
 		} catch(SQLException e) {
