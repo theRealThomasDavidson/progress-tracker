@@ -1,6 +1,7 @@
 package com.cognixia.jump.progress;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
 
 public class menus {
@@ -208,7 +209,7 @@ public class menus {
 		allMovies.add(new Movie("Bongbong Bingbing the Dragon", 120));
 		allMovies.add(new Movie("Climbing a Wall Alone", 120));
 		allMovies.add(new Movie("Gorgeous", 220));
-		allMovies.add(new Movie("Lamanas the Desrtoyer", 120));
+		allMovies.add(new Movie("Lamanas the Destroyer", 120));
 		allMovies.add(new Movie("Disrupting the Bank", 120));
 		allMovies.add(new Movie("Fast 6", 120));
 		allMovies.add(new Movie("Last Chance at a Loan", 120));
@@ -235,7 +236,6 @@ public class menus {
 		wl2.addMovie(allMovies.get(10));
 		wl2.addMovie(allMovies.get(11));
 		watchlists.add(wl2);
-
 	}
 
 	public static void OpeningMenu() {
@@ -270,30 +270,33 @@ public class menus {
 	public static void MainMenu() {
 		System.out.println("\nMain Menu\n");
 
-		DisplayMenuOption("Movies", 1);
-		DisplayMenuOption("Watch Lists", 2);
-		DisplayMenuOption("Log Out", 3);
-		DisplayMenuOption("Quit", 4);
+		DisplayMenuOption("Watch Movie", 1);
+		DisplayMenuOption("View Movies", 2);
+		DisplayMenuOption("Watch Lists", 3);
+		DisplayMenuOption("Log Out", 4);
+		DisplayMenuOption("Quit", 5);
 
 		int input = getInputInt("", 1, 4);
 
 		if (input == 1) {
-			MoviesMenu();
+			SelectMovieToWatch();
 		}
 		if (input == 2) {
-			WatchlistMenu();
+			MoviesMenu();
 		}
 		if (input == 3) {
-			OpeningMenu();
+			WatchlistMenu();
 		}
 		if (input == 4) {
+			OpeningMenu();
+		}
+		if (input == 5) {
 			End();
 		}
 	}
 
 	public static void MoviesMenu() {
 		// print all movies
-		//Some comment? Like, here?
 		System.out.println("All Movies:\n");
 
 		for (int i = 0; i < allMovies.size(); i++) {
@@ -302,7 +305,30 @@ public class menus {
 		}
 		MainMenu();
 	}
+	public static void SelectMovieToWatch() {
+		
+		System.out.println("All Movies:\n");
 
+		for (int i = 0; i < allMovies.size(); i++) {
+			Movie curMovie = allMovies.get(i);
+			System.out.println("(" + i + ") " + curMovie.name + "\t-\t-\t-\t-\tProgress = " + GetPercentMovieProgress(curMovie) + "%");
+		}
+		int input = getInputInt("", 1, allMovies.size() - 1);
+		Movie selectedMovie = allMovies.get(input);
+		WatchMovie(selectedMovie);
+		MainMenu();
+	}
+	
+	public static void WatchMovie(Movie movie) {
+		
+		System.out.println("Wow, what a great movie! Thanks for watching!\n");
+		Random rand = new Random();
+		int minutesWatched = rand.nextInt(movie.totalMinutes);
+		movie.minutesWatched += minutesWatched;
+		autosave();
+		MainMenu();
+	}
+	
 	public static void WatchlistMenu() {
 		DisplayMenuOption("View Watchlist Progress", 1);
 		DisplayMenuOption("View Watchlist Details", 2);
@@ -372,6 +398,8 @@ public class menus {
 			return;
 		}
 		DisplayMoviesInteractive(watchlists.get(input));
+		
+		autosave();
 		WatchlistMenu();
 	}
 
@@ -467,6 +495,7 @@ public class menus {
 				watchlist.removeMovie(allMovies.get(input - 3));
 			}
 			DisplayMoviesInteractive(watchlist);
+			autosave();
 		}
 
 	}
@@ -517,11 +546,12 @@ public class menus {
 			}
 			DisplayMoviesInteractive(watchlist);
 		}
-
+		autosave();
 	}
 
 	public static void DeleteWatchlist() {
 		DisplayWatchlistsInteractive(true);
+		autosave();
 	}
 
 	public static void DisplayMenuOption(String s, int number) {
@@ -598,8 +628,8 @@ public class menus {
 			timeWatched += curMovie.minutesWatched;
 			totalTime += curMovie.totalMinutes;
 		}
-
-		double percentWatched = timeWatched / totalTime / 100;
+		int percentWatchedInt = (int)((timeWatched / totalTime) * 1000);
+		double percentWatched = (double)(percentWatchedInt)/10;
 
 		if (display) {
 			String progressBar = "";
@@ -612,7 +642,8 @@ public class menus {
 			}
 			System.out.println(progressBar + "\n" + percentWatched + "%\n\n");
 		}
-
+		
+		if(percentWatched > 100) percentWatched = 100;
 		return percentWatched;
 	}
 
@@ -621,9 +652,31 @@ public class menus {
 		double timeWatched = movie.minutesWatched;
 		double totalTime = movie.totalMinutes;
 
-		double percentWatched = timeWatched / totalTime / 100;
+		int percentWatchedInt = (int)((timeWatched / totalTime) * 1000);
+		double percentWatched = (double)(percentWatchedInt)/10;
+		
+		if(percentWatched > 100) percentWatched = 100;
 		return percentWatched;
 	}
+	/*
+	public static double ProgressMovie(Movie movie) {
+
+		
+		double timeWatched = movie.minutesWatched + 1;
+		double totalTime = movie.totalMinutes;
+
+		double percentWatched = timeWatched / totalTime / 100;
+		while(percentWatched < 100) {
+			timeWatched = movie.minutesWatched + 1;
+			percentWatched = timeWatched / totalTime / 100;
+		//	Delay(100);
+		}
+		return percentWatched;
+	}
+	*/
 	
+	public static void autosave() {
+		
+	}
 }
 
