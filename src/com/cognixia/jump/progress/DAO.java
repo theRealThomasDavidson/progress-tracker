@@ -18,7 +18,7 @@ public class DAO implements UserDAOInterface{
 	public List<Movie> getAllMovies() {
 		try {
 			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT * FROM movie");
+			ResultSet rs = stmt.executeQuery("SELECT * FROM 'movie'");
 			
 			List<Movie> movieList = new ArrayList<Movie>();
 			
@@ -49,7 +49,7 @@ public class DAO implements UserDAOInterface{
 	public Movie getMovie(int movieId) {
 		try {
 			
-			PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM movie WHERE dept_id = ?");
+			PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM 'movie' WHERE dept_id = ?");
 			pstmt.setInt(1, movieId);
 			
 			ResultSet rs = pstmt.executeQuery();
@@ -79,7 +79,7 @@ public class DAO implements UserDAOInterface{
 	public Movie getMovie(String name) {
 		try {
 			
-			PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM movie WHERE movie_id LIKE ?");
+			PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM 'movie' WHERE movie_id LIKE ?");
 			pstmt.setString(1, name);
 			
 			ResultSet rs = pstmt.executeQuery();
@@ -109,7 +109,7 @@ public class DAO implements UserDAOInterface{
 	public boolean addMovie(Movie movie) {
 		try {
 			
-			PreparedStatement pstmt = conn.prepareStatement("INSERT INTO ");
+			PreparedStatement pstmt = conn.prepareStatement("INSERT INTO 'movie' VALUES(?,?,?,?)");
 			
 			pstmt.setString(1, movie.getName());
 			pstmt.setInt(2, movie.getMin());
@@ -133,25 +133,25 @@ public class DAO implements UserDAOInterface{
 
 	@Override
 	public boolean updateMovie(Movie movie) {
-		try {
-			PreparedStatement pstmt = 
-					conn.prepareStatement("UPDATE ");
-			
-			pstmt.setString(1, movie.getName());
-			pstmt.setString(2, movie.getPhone());
-			pstmt.setInt(3, movie.getId());
-			
-			int count = pstmt.executeUpdate();
-			
-			if(count > 0) {
-				return true;
-			}
-			
-		} catch(SQLException e) {
-			System.out.println("Could NOT update movie record ==> " + movie);
-		}
-		
-		
+//		try {
+//			PreparedStatement pstmt = 
+//					conn.prepareStatement("UPDATE ");
+//			
+//			pstmt.setString(1, movie.getName());
+//			pstmt.setString(2, movie.getPhone());
+//			pstmt.setInt(3, movie.getId());
+//			
+//			int count = pstmt.executeUpdate();
+//			
+//			if(count > 0) {
+//				return true;
+//			}
+//			
+//		} catch(SQLException e) {
+//			System.out.println("Could NOT update movie record ==> " + movie);
+//		}
+//		
+//		
 		return false;
 	}
 
@@ -159,7 +159,7 @@ public class DAO implements UserDAOInterface{
 	public boolean deleteMovie(int movie_id) {
 		try {
 			
-			PreparedStatement pstmt = conn.prepareStatement("DELETE FROM movie WHERE movie_id = ?");
+			PreparedStatement pstmt = conn.prepareStatement("DELETE FROM 'movie' WHERE movie_id = ?");
 			pstmt.setInt(1, movie_id);
 			
 			int count = pstmt.executeUpdate();
@@ -178,18 +178,21 @@ public class DAO implements UserDAOInterface{
 	}
 
 	@Override
-	public List<Watchlist> getAllWatchList() {
+	public List<Watchlist> getAllWatchList(int user_id) {
 		try {
 			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT * FROM watchlist");
+			ResultSet rs = stmt.executeQuery("select w.watchlist_name\r\n"
+					+ "FROM watchlist w\r\n"
+					+ "INNER JOIN user u on u.user_id = w.user_id\r\n"
+					+ "WHERE w.user_id = ?;");
 			
 			List<Watchlist> movieList = new ArrayList<Watchlist>();
 			
 			while(rs.next()) {
 				String name = rs.getString("watchlist_name");
 				
-				Watchlist list = new Watchlist( id, name, rating, release, duration,cost );
-				movieList.add(tempMovie);
+				Watchlist list = new Watchlist( name );
+				movieList.add(list);
 				
 			}
 			
@@ -237,7 +240,10 @@ public class DAO implements UserDAOInterface{
 	public Watchlist getWatchlist(String watchListName) {
 		try {
 			
-			PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM watchlist WHERE watchlist_id = ?");
+			PreparedStatement pstmt = conn.prepareStatement("select w.watchlist_name\r\n"
+					+ "FROM watchlist w\r\n"
+					+ "INNER JOIN user u on u.user_id = w.user_id\r\n"
+					+ "WHERE w.user_id = 1;");
 			pstmt.setString(1, watchListName);
 			
 			ResultSet rs = pstmt.executeQuery();

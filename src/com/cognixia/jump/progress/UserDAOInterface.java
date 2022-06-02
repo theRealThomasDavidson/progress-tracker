@@ -11,7 +11,7 @@ public interface UserDAOInterface{
 	public boolean updateMovie(Movie movie);
 	public boolean deleteMovie(int movie_id);
 	
-	public List<Watchlist> getAllWatchList();
+	public List<Watchlist> getAllWatchList(int userid);
 	public Watchlist getWatchlist(int watchListId);
 	public Watchlist getWatchlist(String watchListName);
 	public boolean addWatchList(Watchlist watchlist);
