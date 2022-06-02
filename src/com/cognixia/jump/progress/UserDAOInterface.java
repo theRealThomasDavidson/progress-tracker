@@ -26,7 +26,7 @@ public interface UserDAOInterface{
 	public boolean updateUser(User user);
 	
 	public List<UserMovie> getMyMovies(int userId);
-	public UserMovie getUserMovie(int user_id);
+	public UserMovie getUserMovie(int user_movie_id, int user_id);
 	public boolean addUserMovie(UserMovie user_movie);
 	public boolean deleteUserMovie(int userMovieId);
 	public boolean updateUserMoie(UserMovie userMovie);

@@ -219,7 +219,38 @@ public class DAO implements UserDAOInterface{
 
 	@Override
 	public List<UserMovie> getMyMovies(int userId) {
-		// TODO Auto-generated method stub
+		try {
+			
+			PreparedStatement pstmt = conn.prepareStatement("select movie_name, \r\n"
+					+ "			concat(`user`.user_firstName, \" \", `user`.user_lastName) as 'name', \r\n"
+					+ "			user_movie.movie_progress_minutes as watch_time, \r\n"
+					+ "            movie.movie_time_minutes as total_time,\r\n"
+					+ "            movie.movie_rating as movie_rating,\r\n"
+					+ "            user_movie.movie_starRating as rating from user_movie \r\n"
+					+ "join `user` on `user`.user_id=user_movie.user_id\r\n"
+					+ "join movie on movie.movie_id=user_movie.movie_id\r\n"
+					+ "where `user`.user_id = ?;");
+			
+			pstmt.setInt(1, userId);
+			
+			ResultSet rs = pstmt.executeQuery();
+			List<UserMovie> list = new ArrayList<>();
+			while(rs.next()) {
+				int id = rs.getInt("movie_id");
+				String movie_name = rs.getString("movie_name");
+				String rating = rs.getString("movie_rating");
+				int duration = rs.getInt("total_time");
+				int watch_time = rs.getInt("watch_time");
+				list.add(new UserMovie(id, movie_name, rating, duration, watch_time);
+				
+			}
+			return list;
+			
+			
+		
+		} catch(SQLException e) {
+			System.out.println("Could NOT insert new department record :(");
+		}
 		return null;
 	}
 
