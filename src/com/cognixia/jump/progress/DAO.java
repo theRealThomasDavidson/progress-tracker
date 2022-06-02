@@ -222,7 +222,7 @@ public class DAO implements UserDAOInterface{
 		try {
 			
 			PreparedStatement pstmt = conn.prepareStatement("select movie_name, \r\n"
-					+ "			concat(`user`.user_firstName, \" \", `user`.user_lastName) as 'name', \r\n"
+					+ "         movie.movie_id,\r\n"
 					+ "			user_movie.movie_progress_minutes as watch_time, \r\n"
 					+ "            movie.movie_time_minutes as total_time,\r\n"
 					+ "            movie.movie_rating as movie_rating,\r\n"
@@ -238,11 +238,12 @@ public class DAO implements UserDAOInterface{
 			List<UserMovie> list = new ArrayList<>();
 			while(rs.next()) {
 				int id = rs.getInt("movie_id");
+				String movie_id = rs.getString("movie_id");
 				String movie_name = rs.getString("movie_name");
 				String rating = rs.getString("movie_rating");
 				int duration = rs.getInt("total_time");
 				int watch_time = rs.getInt("watch_time");
-				list.add(new UserMovie(id, , user_id, movie_name, rating, duration, watch_time));
+				list.add(new UserMovie(id, user_id, movie_id, movie_name, rating, duration, watch_time));
 				
 			}
 			return list;
@@ -260,6 +261,7 @@ public class DAO implements UserDAOInterface{
 		try {
 			
 			PreparedStatement pstmt = conn.prepareStatement("select movie_name, \r\n"
+					+ "         movie.movie_id,\r\n"
 					+ "			concat(`user`.user_firstName, \" \", `user`.user_lastName) as 'name', \r\n"
 					+ "			user_movie.movie_progress_minutes as watch_time, \r\n"
 					+ "            movie.movie_time_minutes as total_time,\r\n"
@@ -277,10 +279,11 @@ public class DAO implements UserDAOInterface{
 			while(rs.next()) {
 				int id = rs.getInt("movie_id");
 				String movie_name = rs.getString("movie_name");
+				String movie_id = rs.getString("movie_id");
 				String rating = rs.getString("movie_rating");
 				int duration = rs.getInt("total_time");
 				int watch_time = rs.getInt("watch_time");
-				return new UserMovie(id, user_id, movie_name, rating, duration, watch_time);
+				return new UserMovie(id, user_id, movie_id, movie_name, rating, duration, watch_time)
 			}		
 		
 		} catch(SQLException e) {
