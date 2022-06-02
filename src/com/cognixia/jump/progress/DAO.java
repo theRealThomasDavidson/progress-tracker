@@ -218,7 +218,45 @@ public class DAO implements UserDAOInterface{
 	}
 
 	@Override
-	public List<UserMovie> getMyMovies(int userId) {
+	public List<UserMovie> getMyMovies(int user_id) {
+		try {
+			
+			PreparedStatement pstmt = conn.prepareStatement("select movie_name, \r\n"
+					+ "			concat(`user`.user_firstName, \" \", `user`.user_lastName) as 'name', \r\n"
+					+ "			user_movie.movie_progress_minutes as watch_time, \r\n"
+					+ "            movie.movie_time_minutes as total_time,\r\n"
+					+ "            movie.movie_rating as movie_rating,\r\n"
+					+ "            user_movie.user_id as user_id,\r\n"
+					+ "            user_movie.movie_starRating as rating from user_movie \r\n"
+					+ "join `user` on `user`.user_id=user_movie.user_id\r\n"
+					+ "join movie on movie.movie_id=user_movie.movie_id\r\n"
+					+ "where `user`.user_id = ?;");
+			
+			pstmt.setInt(1, user_id);
+			
+			ResultSet rs = pstmt.executeQuery();
+			List<UserMovie> list = new ArrayList<>();
+			while(rs.next()) {
+				int id = rs.getInt("movie_id");
+				String movie_name = rs.getString("movie_name");
+				String rating = rs.getString("movie_rating");
+				int duration = rs.getInt("total_time");
+				int watch_time = rs.getInt("watch_time");
+				list.add(new UserMovie(id, , user_id, movie_name, rating, duration, watch_time));
+				
+			}
+			return list;
+			
+			
+		
+		} catch(SQLException e) {
+			System.out.println("Could NOT get My Movies :(");
+		}
+		return null;
+	}
+
+	@Override
+	public UserMovie getUserMovie(int user_movie_id, int user_id) {
 		try {
 			
 			PreparedStatement pstmt = conn.prepareStatement("select movie_name, \r\n"
@@ -229,9 +267,10 @@ public class DAO implements UserDAOInterface{
 					+ "            user_movie.movie_starRating as rating from user_movie \r\n"
 					+ "join `user` on `user`.user_id=user_movie.user_id\r\n"
 					+ "join movie on movie.movie_id=user_movie.movie_id\r\n"
-					+ "where `user`.user_id = ?;");
+					+ "where `user`.user_id = ? and user_movie.mtm_id=?;");
 			
-			pstmt.setInt(1, userId);
+			pstmt.setInt(1, user_id);
+			pstmt.setInt(2, user_movie_id);
 			
 			ResultSet rs = pstmt.executeQuery();
 			List<UserMovie> list = new ArrayList<>();
@@ -241,40 +280,79 @@ public class DAO implements UserDAOInterface{
 				String rating = rs.getString("movie_rating");
 				int duration = rs.getInt("total_time");
 				int watch_time = rs.getInt("watch_time");
-				list.add(new UserMovie(id, movie_name, rating, duration, watch_time);
-				
-			}
-			return list;
-			
-			
+				return new UserMovie(id, user_id, movie_name, rating, duration, watch_time);
+			}		
 		
 		} catch(SQLException e) {
-			System.out.println("Could NOT insert new department record :(");
+			System.out.println("Could NOT get My Movies :(");
 		}
 		return null;
 	}
 
 	@Override
-	public UserMovie getUserMovie(int user_id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public boolean addUserMovie(UserMovie user_movie) {
-		// TODO Auto-generated method stub
+		try {
+			
+			PreparedStatement pstmt = conn.prepareStatement("insert into `user_movie`"
+					+ "(user_id, movie_id, movie_progress_minutes, movie_starRating) "
+					+ "values(?, ?, ?, ?);");
+			
+			pstmt.setInt(1, user_movie.getUserId());
+			pstmt.setInt(2, user_movie.getMovieId());
+			pstmt.setInt(3, user_movie.getMovieProgress());
+			pstmt.setString(4, user_movie.getMovieStarRating());
+			int count = pstmt.executeUpdate();
+			
+			if(count > 0) {
+				return true;
+			}
+		} catch(SQLException e) {
+			System.out.println("Could NOT insert new department record :(");
+		}
 		return false;
 	}
 
 	@Override
 	public boolean deleteUserMovie(int userMovieId) {
-		// TODO Auto-generated method stub
+		try {
+			
+			PreparedStatement pstmt = conn.prepareStatement("delete from `user_movie` where mtm_id = ?;");
+			
+			pstmt.setInt(1, userMovieId);
+			int count = pstmt.executeUpdate();
+			if(count > 0) {
+				return true;
+			}
+		} catch(SQLException e) {
+			System.out.println("Could NOT insert new department record :(");
+		}
 		return false;
 	}
 
 	@Override
-	public boolean updateUserMoie(UserMovie userMovie) {
-		// TODO Auto-generated method stub
+	public boolean updateUserMoie(UserMovie user_movie) {
+		try {
+			
+			PreparedStatement pstmt = conn.prepareStatement("update `user_movie` set \r\n"
+					+ "	user_id=?,\r\n"
+					+ "    movie_id=?,\r\n"
+					+ "    movie_progress_minutes = ?,\r\n"
+					+ "    movie_starRating = ?\r\n"
+					+ "where mtm_id = ?;");
+			
+			pstmt.setInt(1, user_movie.getUserId());
+			pstmt.setInt(2, user_movie.getMovieId());
+			pstmt.setInt(3, user_movie.getMovieProgress());
+			pstmt.setString(4, user_movie.getMovieStarRating());
+			pstmt.setInt(5, user_movie.getUserMovieId());
+			int count = pstmt.executeUpdate();
+			
+			if(count > 0) {
+				return true;
+			}
+		} catch(SQLException e) {
+			System.out.println("Could NOT insert new department record :(");
+		}
 		return false;
 	}
 
