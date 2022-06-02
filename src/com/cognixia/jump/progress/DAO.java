@@ -444,7 +444,7 @@ public class DAO implements UserDAOInterface{
 	}
 
 	@Override
-	public boolean updateUserMoie(UserMovie user_movie) {
+	public boolean updateUserMovie(UserMovie user_movie) {
 		try {
 			
 			PreparedStatement pstmt = conn.prepareStatement("update `user_movie` set \r\n"
