@@ -40,7 +40,7 @@ public class DAO implements UserDAOInterface{
 			
 			
 		} catch(SQLException e) {
-			System.out.println("Could NOT retrieve list of movie from D/B :(");
+			System.out.println("Could NOT retrieve list of movies from D/B :(");
 		}
 		
 		return null;
@@ -56,14 +56,11 @@ public class DAO implements UserDAOInterface{
 			ResultSet rs = pstmt.executeQuery();
 			
 			while(rs.next()) {
-				int id = rs.getInt("movie_id");
+				int runtime = rs.getInt("movie_time_minutes");
 				String name = rs.getString("movie_name");
 				String rating = rs.getString("movie_rating");
-				Date release = rs.getDate("movie_release_date");
-				int duration = rs.getInt("movie_time_minutes");
-				double cost = rs.getDouble("movie_cost");
-			
-				Movie movie = new Movie(name, rating, release, duration,cost );
+				String genre = rs.getString("movie_genre");
+				Movie movie = new Movie(runtime, name, genre, rating);
 				return movie;
 			}
 			
@@ -80,21 +77,20 @@ public class DAO implements UserDAOInterface{
 	@Override
 	public Movie getMovie(String name) {
 		try {
-			
-			PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM movie WHERE movie_name = ?");
+			PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM movie WHERE movie_id LIKE ?");
 			pstmt.setString(1, name);
 			
 			ResultSet rs = pstmt.executeQuery();
 			
 			while(rs.next()) {
-				int id = rs.getInt("movie_id");
+
+				int runtime = rs.getInt("movie_time_minutes");
 				String movie_name = rs.getString("movie_name");
 				String rating = rs.getString("movie_rating");
-				Date release = rs.getDate("movie_release_date");
-				int duration = rs.getInt("movie_time_minutes");
-				double cost = rs.getDouble("movie_cost");
+				String genre = rs.getString("movie_genre");
+				
 			
-				Movie movie = new Movie(id, movie_name, rating, release, duration,cost );
+				Movie movie = new Movie(runtime, name, genre, rating);
 				return movie;
 			}
 			
@@ -111,7 +107,6 @@ public class DAO implements UserDAOInterface{
 	@Override
 	public boolean addMovie(Movie movie) {
 		try {
-			
 			PreparedStatement pstmt = conn.prepareStatement("INSERT INTO movie(movie_id, movie_name, movie_rating, movie_release_date, movie_time_minutes, movie_cost) VALUES(1, ?, ?, ?, ?, ?)");
 			
 			pstmt.setInt(1, movie.getname());
@@ -135,43 +130,180 @@ public class DAO implements UserDAOInterface{
 
 	@Override
 	public boolean updateMovie(Movie movie) {
-		// TODO Auto-generated method stub
+		try {
+			PreparedStatement pstmt = 
+					conn.prepareStatement("UPDATE ");
+			
+			pstmt.setString(1, movie.getName());
+			pstmt.setString(2, movie.getPhone());
+			pstmt.setInt(3, movie.getId());
+			
+			int count = pstmt.executeUpdate();
+			
+			if(count > 0) {
+				return true;
+			}
+			
+		} catch(SQLException e) {
+			System.out.println("Could NOT update movie record ==> " + movie);
+		}
+		
+		
 		return false;
 	}
 
 	@Override
 	public boolean deleteMovie(int movie_id) {
-		// TODO Auto-generated method stub
+		try {
+			
+			PreparedStatement pstmt = conn.prepareStatement("DELETE FROM movie WHERE movie_id = ?");
+			pstmt.setInt(1, movie_id);
+			
+			int count = pstmt.executeUpdate();
+			
+			if(count > 0) {
+				return true;
+			}
+			
+		
+		} catch(SQLException e) {
+			System.out.println("Could NOT find movie record with id ==> " + movie_id);
+		}
+		
+		
 		return false;
 	}
 
 	@Override
 	public List<Watchlist> getAllWatchList() {
-		// TODO Auto-generated method stub
+		try {
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT * FROM watchlist");
+			
+			List<Watchlist> movieList = new ArrayList<Watchlist>();
+			
+			while(rs.next()) {
+				String name = rs.getString("watchlist_name");
+				
+				Watchlist list = new Watchlist( id, name, rating, release, duration,cost );
+				movieList.add(tempMovie);
+				
+			}
+			
+			return movieList;
+			
+			
+		} catch(SQLException e) {
+			System.out.println("Could NOT retrieve list of movies from D/B :(");
+		}
+		
 		return null;
 	}
 
 	@Override
 	public Watchlist getWatchlist(int watchListId) {
-		// TODO Auto-generated method stub
+	try {
+			
+			PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM movie WHERE dept_id LIKE ?");
+			pstmt.setInt(1, watchListId);
+			
+			ResultSet rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				int name = rs.getString("watchlist_name");
+				String movie_name = rs.getString("movie_name");
+				String rating = rs.getString("movie_rating");
+				String genre = rs.getString("movie_genre");
+				
+			
+				Movie movie = new Movie(runtime, name, genre, rating);
+				return movie;
+			}
+			
+			
+			
+		}catch(SQLException e) {
+			System.out.println("Could NOT locate the movie record with name ==> " + name);
+		}
+		
+		
 		return null;
 	}
 
 	@Override
 	public Watchlist getWatchlist(String watchListName) {
-		// TODO Auto-generated method stub
+		try {
+			
+			PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM watchlist WHERE watchlist_id = ?");
+			pstmt.setString(1, watchListName);
+			
+			ResultSet rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				String list_name = rs.getString("watchlist_name");
+				String rating = rs.getString("movie_rating");
+				String genre = rs.getString("movie_genre");
+				
+			
+				Movie movie = new Movie(runtime, name, genre, rating);
+				return movie;
+			}
+			
+			
+			
+		}catch(SQLException e) {
+			System.out.println("Could NOT locate the movie record with name ==> " + name);
+		}
+		
+		
 		return null;
 	}
 
 	@Override
 	public boolean addWatchList(Watchlist watchlist) {
-		// TODO Auto-generated method stub
+		try {
+			
+			PreparedStatement pstmt = conn.prepareStatement("INSERT INTO ");
+			
+			pstmt.setString(1, movie.getName());
+			pstmt.setInt(2, movie.getMin());
+			pstmt.setString(3, movie.getGenre());
+			pstmt.setString(4, movie.getRating());
+			
+			int count = pstmt.executeUpdate();
+			
+			if(count > 0) {
+				return true;
+			}
+			
+		
+		} catch(SQLException e) {
+			System.out.println("Could NOT insert new movie record :(");
+		}
+		
+		
 		return false;
 	}
 
 	@Override
 	public boolean deletewatchList(int watchId) {
-		// TODO Auto-generated method stub
+		try {
+			
+			PreparedStatement pstmt = conn.prepareStatement("DELETE FROM movie WHERE movie_id = ?");
+			pstmt.setInt(1, watchId);
+			
+			int count = pstmt.executeUpdate();
+			
+			if(count > 0) {
+				return true;
+			}
+			
+		
+		} catch(SQLException e) {
+			System.out.println("Could NOT find movie record with id ==> " + movie_id);
+		}
+		
+		
 		return false;
 	}
 
